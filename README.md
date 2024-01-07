@@ -13,3 +13,4 @@ Navigate to:
 - [Startups](./docs/startups.md) for my thoughts and learnings from building a startup
 - [Work](./docs/work.md) for the products and involvements in my work
 - [Hackathons](./docs/hackathons.md) for smaller standalone projects I've experimented
+- [Writings](./docs/writings.md) for jotting down my thoughts
