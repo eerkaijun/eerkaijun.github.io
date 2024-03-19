@@ -2,6 +2,15 @@
 
 Hackathons are a great way to experiment with new ideas and toolings. They are usually proxies for me to try out things that I have very little experience in.
 
+### ETHGlobal London 2024
+
+A solo hack this time where I worked on an MPC protocol on Flashbots SUAVE chain. The idea is that a user will be able to delegate shards of its signing key into different SUAVE nodes, where each node is actually operating a trusted execution environment (TEE). Each time the user would like to submit a transaction, it will simply send the transaction calldata to SUAVE, where the signing key is reconstructed through Shamir secret sharing and used to sign on the calldata. This signed transaction can then be relayed to other chains. As such, the notion of private keys can be abstracted from the users. 
+
+I won two prizes from Flashbots and Nethermind respectively. I've been wanting to try out SUAVE for quite a while and finally getting the chance to do so. More details on the project below:
+- [Github](https://github.com/eerkaijun/suave-mpc)
+- [Project submission](https://ethglobal.com/showcase/suave-mpc-16pmz)
+- [Bite-size Twitter thread](https://x.com/kaijuneer/status/1769473343181254724)
+
 ### ZK Hack November 2023
 
 This is by far one of the best hackathons that I've been to - good quality of hackathon participants and awesome teammates. We wrote low-level cryptographic primitives that reduce a SNARK proving system into a multivariate polynomial problem, which is further reduced through the sumcheck protocol and then eventually transformed into a univariate polynomial. The high level motivation for such transformation is that polynomial commitment scheme such as KZG works better with univariate polynomials than with multivariate polynomials. We also implemented a simplified version of the Spartan SNARK proving system as a proof of concept.
