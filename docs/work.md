@@ -2,7 +2,7 @@
 
 ### Monad
 
-I'm currently working with the Monad team to build the consensus client. It is a derivative of the Hotstuff consensus mechanism with improvements proposed in DiemBFT. More to come soon.
+I'm currently working with the Monad team to build the consensus client. It is a derivative of the pipelined Hotstuff consensus mechanism with tailforking resistance improvements. One other highlight of the consensus client is [Raptorcast](https://www.category.xyz/blogs/raptorcast-designing-a-messaging-layer) which is an efficient messaging layer for high performance blockchains.
 
 I also built a fully on-chain limit order book. Fundamentally, the main advantage of an order book over an AMM is much lower slippage. However, order book has not really taken off due to the higher gas cost (AMM uses approximation in terms of pricing hence simpler computation). We believe Monad has sufficiently cheap gas to make an order book feasible.
 
