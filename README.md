@@ -9,8 +9,8 @@ My mental model of the value of web3 is an open internet where every application
 I first started developing in web3 in 2020 when I was involved in academic research on privacy in decentralized identity system (side note: published a [paper](https://arxiv.org/abs/2208.04624) too). Since then, I've worked on open source projects, DeFi protocols, my own startups and various fun hackathons.
 
 Navigate to:
-- [Open source projects](./docs/open-source.md) for some open source projects I've contributed to
-- [Startups](./docs/startups.md) for my thoughts and learnings from building a startup
 - [Work](./docs/work.md) for the products and involvements in my work
+- [Startups](./docs/startups.md) for my thoughts and learnings from building a startup
+- [Open source projects](./docs/open-source.md) for some open source projects I've contributed to
 - [Hackathons](./docs/hackathons.md) for smaller standalone projects I've experimented
 - [Writings](./docs/writings.md) for jotting down my thoughts
