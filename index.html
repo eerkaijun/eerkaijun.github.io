@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kai - Software Engineer</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+</head>
+<body>
+    <nav class="nav">
+        <a href="#home" class="nav-logo">Kai</a>
+        <div class="nav-links">
+            <a href="#work">Work</a>
+            <a href="#startups">Startups</a>
+            <a href="#opensource">Open Source</a>
+            <a href="#hackathons">Hackathons</a>
+            <a href="#writings">Writings</a>
+        </div>
+    </nav>
+
+    <main class="container">
+        <div id="content" class="content">
+            <p class="loading">Loading...</p>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <p><a href="https://twitter.com/kaijuneer" target="_blank">Twitter</a> / <a href="https://github.com/eerkaijun" target="_blank">Github</a></p>
+    </footer>
+
+    <script>
+        // Map hash routes to markdown files
+        const routes = {
+            'home': 'README.md',
+            'work': 'docs/work.md',
+            'startups': 'docs/startups.md',
+            'opensource': 'docs/open-source.md',
+            'hackathons': 'docs/hackathons.md',
+            'writings': 'docs/writings.md'
+        };
+
+        // Cache for loaded markdown
+        const cache = {};
+
+        async function loadContent(hash) {
+            const route = hash.replace('#', '') || 'home';
+            const file = routes[route];
+
+            if (!file) {
+                document.getElementById('content').innerHTML = '<p>Page not found.</p>';
+                return;
+            }
+
+            const contentDiv = document.getElementById('content');
+
+            // Show loading state
+            contentDiv.innerHTML = '<p class="loading">Loading...</p>';
+            contentDiv.classList.remove('loaded');
+
+            try {
+                let markdown;
+                if (cache[file]) {
+                    markdown = cache[file];
+                } else {
+                    const response = await fetch(file);
+                    if (!response.ok) throw new Error('Failed to load');
+                    markdown = await response.text();
+                    cache[file] = markdown;
+                }
+
+                // Parse markdown to HTML
+                const html = marked.parse(markdown);
+                contentDiv.innerHTML = html;
+
+                // Add loaded class for animation
+                requestAnimationFrame(() => {
+                    contentDiv.classList.add('loaded');
+                });
+
+                // Make all links open in new tab
+                contentDiv.querySelectorAll('a').forEach(link => {
+                    if (link.hostname !== window.location.hostname) {
+                        link.setAttribute('target', '_blank');
+                        link.setAttribute('rel', 'noopener noreferrer');
+                    }
+                });
+
+            } catch (error) {
+                contentDiv.innerHTML = '<p>Failed to load content.</p>';
+            }
+
+            // Update active nav link
+            updateNav(route);
+
+            // Scroll to top
+            window.scrollTo(0, 0);
+        }
+
+        function updateNav(route) {
+            const navLinks = document.querySelectorAll('.nav-links a');
+            navLinks.forEach(link => {
+                const linkRoute = link.getAttribute('href').replace('#', '');
+                if (linkRoute === route) {
+                    link.classList.add('active');
+                } else {
+                    link.classList.remove('active');
+                }
+            });
+        }
+
+        // Listen for hash changes
+        window.addEventListener('hashchange', () => {
+            loadContent(window.location.hash);
+        });
+
+        // Initial load
+        document.addEventListener('DOMContentLoaded', () => {
+            loadContent(window.location.hash || '#home');
+        });
+    </script>
+</body>
+</html>
