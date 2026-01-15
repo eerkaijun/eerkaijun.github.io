@@ -19,72 +19,135 @@ body {
     flex-direction: column;
 }
 
-/* Navigation */
-.nav {
+/* Terminal Header */
+.terminal-header {
     position: fixed;
     top: 0;
     left: 0;
     right: 0;
-    background: #fafafa;
-    border-bottom: 1px solid #e0e0e0;
+    background: #1a1a1a;
     padding: 1rem 2rem;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
     z-index: 100;
+    font-family: 'SF Mono', 'Monaco', 'Consolas', monospace;
 }
 
-.nav-logo {
-    font-size: 1.5rem;
-    font-weight: normal;
-    text-decoration: none;
-    color: #1a1a1a;
-    letter-spacing: 0.02em;
+.terminal-prompt {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0;
+    font-size: 0.95rem;
 }
 
-.nav-logo:hover {
+.prompt-user {
+    color: #4ade80;
+}
+
+.prompt-separator {
+    color: #666;
+}
+
+.prompt-path {
+    color: #60a5fa;
+}
+
+.prompt-symbol {
+    color: #fafafa;
+    margin-right: 0.75rem;
+}
+
+.command-input {
+    flex: 1;
+    min-width: 200px;
+    background: transparent;
+    border: none;
+    outline: none;
+    color: #fafafa;
+    font-family: inherit;
+    font-size: inherit;
+    caret-color: #4ade80;
+}
+
+.command-input::placeholder {
     color: #555;
 }
 
-.nav-links {
+.terminal-hints {
+    margin-top: 0.75rem;
     display: flex;
-    gap: 2rem;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.5rem;
 }
 
-.nav-links a {
-    text-decoration: none;
+.hint-label {
+    color: #555;
+    font-size: 0.8rem;
+    margin-right: 0.25rem;
+}
+
+.hint-cmd {
+    background: transparent;
+    border: 1px solid #333;
+    color: #888;
+    padding: 0.2rem 0.6rem;
+    font-family: inherit;
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    border-radius: 3px;
+}
+
+.hint-cmd:hover {
+    border-color: #4ade80;
+    color: #4ade80;
+}
+
+/* Terminal Output */
+.terminal-output {
+    font-family: 'SF Mono', 'Monaco', 'Consolas', monospace;
+    font-size: 0.85rem;
+    margin-bottom: 1.5rem;
+    padding: 0.75rem;
+    background: #f5f5f5;
+    border-radius: 4px;
+    display: none;
+}
+
+.terminal-output:not(:empty) {
+    display: block;
+}
+
+.terminal-output span {
+    display: block;
+}
+
+.output-cmd {
     color: #666;
-    font-size: 0.9rem;
-    transition: color 0.2s ease;
-    position: relative;
 }
 
-.nav-links a:hover,
-.nav-links a.active {
-    color: #1a1a1a;
+.output-response {
+    color: #666;
 }
 
-.nav-links a::after {
-    content: '';
-    position: absolute;
-    bottom: -4px;
-    left: 0;
-    width: 0;
-    height: 1px;
-    background: #1a1a1a;
-    transition: width 0.2s ease;
+.output-success {
+    color: #16a34a;
 }
 
-.nav-links a:hover::after,
-.nav-links a.active::after {
-    width: 100%;
+.output-error {
+    color: #dc2626;
+}
+
+.output-hint {
+    color: #999;
+    font-size: 0.8rem;
 }
 
 /* Main container */
 .container {
     max-width: 700px;
     margin: 0 auto;
-    padding: 6rem 2rem 4rem;
+    padding: 7rem 2rem 4rem;
     flex: 1;
 }
 
@@ -209,17 +272,19 @@ body {
     padding: 2rem;
     border-top: 1px solid #e0e0e0;
     background: #fafafa;
+    font-family: 'SF Mono', 'Monaco', 'Consolas', monospace;
 }
 
 .footer p {
     margin: 0;
     color: #666;
-    font-size: 0.9rem;
+    font-size: 0.85rem;
 }
 
 .footer a {
     color: #666;
     text-decoration: none;
+    transition: color 0.15s ease;
 }
 
 .footer a:hover {
@@ -232,20 +297,25 @@ body {
         font-size: 16px;
     }
 
-    .nav {
-        flex-direction: column;
-        gap: 1rem;
+    .terminal-header {
         padding: 1rem;
     }
 
-    .nav-links {
-        gap: 1rem;
-        flex-wrap: wrap;
-        justify-content: center;
+    .terminal-prompt {
+        font-size: 0.85rem;
     }
 
-    .nav-links a {
-        font-size: 0.85rem;
+    .command-input {
+        min-width: 150px;
+    }
+
+    .terminal-hints {
+        gap: 0.4rem;
+    }
+
+    .hint-cmd {
+        padding: 0.15rem 0.4rem;
+        font-size: 0.75rem;
     }
 
     .container {
@@ -262,8 +332,12 @@ body {
 }
 
 @media (max-width: 480px) {
-    .nav-links {
-        gap: 0.75rem;
+    .terminal-prompt {
+        font-size: 0.8rem;
+    }
+
+    .hint-label {
+        display: none;
     }
 
     .container {

@@ -8,29 +8,34 @@
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 </head>
 <body>
-    <nav class="nav">
-        <a href="#home" class="nav-logo">Home</a>
-        <div class="nav-links">
-            <a href="#work">Work</a>
-            <a href="#startups">Startups</a>
-            <a href="#opensource">Open Source</a>
-            <a href="#hackathons">Hackathons</a>
-            <a href="#writings">Writings</a>
+    <header class="terminal-header">
+        <div class="terminal-prompt">
+            <span class="prompt-user">visitor@kai</span><span class="prompt-separator">:</span><span class="prompt-path">~</span><span class="prompt-symbol">$</span>
+            <input type="text" id="command-input" class="command-input" placeholder="type a command..." autocomplete="off" spellcheck="false">
         </div>
-    </nav>
+        <div class="terminal-hints">
+            <span class="hint-label">try:</span>
+            <button class="hint-cmd" data-cmd="home">home</button>
+            <button class="hint-cmd" data-cmd="work">work</button>
+            <button class="hint-cmd" data-cmd="startups">startups</button>
+            <button class="hint-cmd" data-cmd="opensource">opensource</button>
+            <button class="hint-cmd" data-cmd="hackathons">hackathons</button>
+            <button class="hint-cmd" data-cmd="writings">writings</button>
+        </div>
+    </header>
 
     <main class="container">
+        <div id="terminal-output" class="terminal-output"></div>
         <div id="content" class="content">
             <p class="loading">Loading...</p>
         </div>
     </main>
 
     <footer class="footer">
-        <p><a href="https://twitter.com/kaijuneer" target="_blank">Twitter</a> / <a href="https://github.com/eerkaijun" target="_blank">Github</a></p>
+        <p><a href="https://twitter.com/kaijuneer" target="_blank">twitter</a> / <a href="https://github.com/eerkaijun" target="_blank">github</a></p>
     </footer>
 
     <script>
-        // Map hash routes to markdown files
         const routes = {
             'home': 'README.md',
             'work': 'docs/work.md',
@@ -40,22 +45,45 @@
             'writings': 'docs/writings.md'
         };
 
-        // Cache for loaded markdown
         const cache = {};
+        const commandInput = document.getElementById('command-input');
+        const terminalOutput = document.getElementById('terminal-output');
+        const contentDiv = document.getElementById('content');
 
-        async function loadContent(hash) {
-            const route = hash.replace('#', '') || 'home';
-            const file = routes[route];
+        // Execute command
+        async function executeCommand(cmd) {
+            const command = cmd.toLowerCase().trim();
 
-            if (!file) {
-                document.getElementById('content').innerHTML = '<p>Page not found.</p>';
+            // Show command in output
+            terminalOutput.innerHTML = `<span class="output-cmd">> ${command}</span>`;
+
+            if (command === 'help' || command === '?') {
+                terminalOutput.innerHTML += `<span class="output-response">available: home, work, startups, opensource, hackathons, writings</span>`;
                 return;
             }
 
-            const contentDiv = document.getElementById('content');
+            if (command === 'clear' || command === 'cls') {
+                terminalOutput.innerHTML = '';
+                contentDiv.innerHTML = '';
+                contentDiv.classList.remove('loaded');
+                return;
+            }
 
-            // Show loading state
-            contentDiv.innerHTML = '<p class="loading">Loading...</p>';
+            if (routes[command]) {
+                terminalOutput.innerHTML += `<span class="output-response">loading ${command}...</span>`;
+                await loadContent(command);
+                history.pushState(null, '', `#${command}`);
+            } else if (command !== '') {
+                terminalOutput.innerHTML += `<span class="output-error">command not found: ${command}</span>`;
+                terminalOutput.innerHTML += `<span class="output-hint">type 'help' for available commands</span>`;
+            }
+        }
+
+        // Load markdown content
+        async function loadContent(route) {
+            const file = routes[route];
+            if (!file) return;
+
             contentDiv.classList.remove('loaded');
 
             try {
@@ -69,16 +97,13 @@
                     cache[file] = markdown;
                 }
 
-                // Parse markdown to HTML
                 const html = marked.parse(markdown);
                 contentDiv.innerHTML = html;
 
-                // Add loaded class for animation
                 requestAnimationFrame(() => {
                     contentDiv.classList.add('loaded');
                 });
 
-                // Make all links open in new tab
                 contentDiv.querySelectorAll('a').forEach(link => {
                     if (link.hostname !== window.location.hostname) {
                         link.setAttribute('target', '_blank');
@@ -86,37 +111,58 @@
                     }
                 });
 
+                terminalOutput.innerHTML = `<span class="output-cmd">> ${route}</span><span class="output-success">loaded ${route}</span>`;
+
             } catch (error) {
                 contentDiv.innerHTML = '<p>Failed to load content.</p>';
+                terminalOutput.innerHTML += `<span class="output-error">error loading ${route}</span>`;
             }
 
-            // Update active nav link
-            updateNav(route);
-
-            // Scroll to top
             window.scrollTo(0, 0);
         }
 
-        function updateNav(route) {
-            const navLinks = document.querySelectorAll('.nav-links a');
-            navLinks.forEach(link => {
-                const linkRoute = link.getAttribute('href').replace('#', '');
-                if (linkRoute === route) {
-                    link.classList.add('active');
-                } else {
-                    link.classList.remove('active');
-                }
-            });
-        }
+        // Input handling
+        commandInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                executeCommand(commandInput.value);
+                commandInput.value = '';
+            }
+        });
 
-        // Listen for hash changes
+        // Clickable hints
+        document.querySelectorAll('.hint-cmd').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const cmd = btn.dataset.cmd;
+                commandInput.value = cmd;
+                executeCommand(cmd);
+                commandInput.value = '';
+                commandInput.focus();
+            });
+        });
+
+        // Focus input on page click
+        document.addEventListener('click', (e) => {
+            if (!window.getSelection().toString() &&
+                !e.target.closest('a') &&
+                !e.target.closest('button') &&
+                !e.target.closest('input')) {
+                commandInput.focus();
+            }
+        });
+
+        // Handle browser back/forward
         window.addEventListener('hashchange', () => {
-            loadContent(window.location.hash);
+            const route = window.location.hash.replace('#', '') || 'home';
+            if (routes[route]) {
+                loadContent(route);
+            }
         });
 
         // Initial load
         document.addEventListener('DOMContentLoaded', () => {
-            loadContent(window.location.hash || '#home');
+            const route = window.location.hash.replace('#', '') || 'home';
+            loadContent(routes[route] ? route : 'home');
+            commandInput.focus();
         });
     </script>
 </body>
